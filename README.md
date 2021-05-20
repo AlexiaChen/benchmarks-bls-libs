@@ -41,7 +41,7 @@ The following collation of a detailed table, because we only focus on the runnin
 | num 100 Fast Aggregated Verify        | 2018462 ns/op       |   1775963 ns/op    |
 | num 1000 Fast Aggregated Verify        | 2627733 ns/op     |   2254356 ns/op      |
 
-From the above table, we can see that blst's library is faster than herumi library in both signature and verification signature, but only the performance of ordinary aggregated verification signature is 3 times faster than herumi library, if it is fast aggregated verification signature, blst library is obviously not 3 times faster than herumi library, the advantage is not great.
+From the above table, we can see that blst's library is faster than herumi library in both generate of signature and verification of signature, but only the performance of ordinary aggregated verification of signature is 3 times faster than herumi library, if it is fast aggregated verification of signature, blst library is obviously not 3 times faster than herumi library, the advantage is not great.
 
 Of course, all in all, the performance advantages of the blst library over the herumi library are comprehensive
 
