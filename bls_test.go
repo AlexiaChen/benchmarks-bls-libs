@@ -84,6 +84,34 @@ func benchmarkBlstAggregateVerify(n int, b *testing.B) {
 
 }
 
+func benchmarkBlstFastAggregateVerify(n int, b *testing.B) {
+	message := []byte("hello foo")
+	publicKeys := make([]*blstPublicKey, n)
+	signatures := make([]*blstSignature, n)
+
+	for i := 0; i < n; i++ {
+		message := make([]byte, 32)
+		rand.Read(message)
+		secretKey := randBLSTSecretKey()
+		publicKey := blstPubkey(secretKey)
+		signature := new(blstSignature).Sign(secretKey, message, dstMinPk)
+		signatures[i] = signature
+		publicKeys[i] = publicKey
+	}
+
+	aggregatedSignature := new(blst.P2Aggregate)
+	aggregatedSignature.Aggregate(signatures, false)
+
+	aggreSig := aggregatedSignature.ToAffine()
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		aggreSig.FastAggregateVerify(false, publicKeys, message, dstMinPk)
+	}
+
+}
+
 func BenchmarkBlstAggregateVerify10(b *testing.B) {
 	benchmarkBlstAggregateVerify(10, b)
 }
@@ -94,4 +122,16 @@ func BenchmarkBlstAggregateVerify100(b *testing.B) {
 
 func BenchmarkBlstAggregateVerify1000(b *testing.B) {
 	benchmarkBlstAggregateVerify(1000, b)
+}
+
+func BenchmarkBlstFastAggregateVerify10(b *testing.B) {
+	benchmarkBlstFastAggregateVerify(10, b)
+}
+
+func BenchmarkBlstFastAggregateVerify100(b *testing.B) {
+	benchmarkBlstFastAggregateVerify(100, b)
+}
+
+func BenchmarkBlstFastAggregateVerify1000(b *testing.B) {
+	benchmarkBlstFastAggregateVerify(1000, b)
 }
