@@ -132,14 +132,44 @@ func benchmarkBlstAggregateVerify(n int, b *testing.B) {
 
 }
 
+func benchmarkHerumiAggregateVerify(n int, b *testing.B) {
+	messages := make([][]byte, n)
+	publicKeys := make([]herumiPublicKey, n)
+	signatures := make([]herumiSignature, n)
+
+	for i := 0; i < n; i++ {
+		message := make([]byte, 32)
+		rand.Read(message)
+		secretKey := randHerumiSecretKey()
+		publicKey := herumiPubkey(secretKey)
+		signature := secretKey.Sign(string(message))
+		signatures[i] = *signature
+		publicKeys[i] = *publicKey
+		messages[i] = message
+	}
+
+	aggregatedSignature := new(herumiSignature)
+	aggregatedSignature.Aggregate(signatures)
+
+	_messages := []byte{}
+	size := len(publicKeys)
+	for i := 0; i < size; i++ {
+		_messages = append(_messages, messages[i][:]...)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		aggregatedSignature.AggregateVerify(publicKeys, _messages)
+	}
+}
+
 func benchmarkBlstFastAggregateVerify(n int, b *testing.B) {
 	message := []byte("hello foo")
 	publicKeys := make([]*blstPublicKey, n)
 	signatures := make([]*blstSignature, n)
 
 	for i := 0; i < n; i++ {
-		message := make([]byte, 32)
-		rand.Read(message)
 		secretKey := randBLSTSecretKey()
 		publicKey := blstPubkey(secretKey)
 		signature := new(blstSignature).Sign(secretKey, message, dstMinPk)
@@ -160,26 +190,76 @@ func benchmarkBlstFastAggregateVerify(n int, b *testing.B) {
 
 }
 
+func benchmarkHerumiFastAggregateVerify(n int, b *testing.B) {
+	message := []byte("hello foo")
+	publicKeys := make([]herumiPublicKey, n)
+	signatures := make([]herumiSignature, n)
+
+	for i := 0; i < n; i++ {
+		secretKey := randHerumiSecretKey()
+		publicKey := herumiPubkey(secretKey)
+		signature := secretKey.Sign(string(message))
+		signatures[i] = *signature
+		publicKeys[i] = *publicKey
+
+	}
+
+	aggregatedSignature := new(herumiSignature)
+	aggregatedSignature.Aggregate(signatures)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		aggregatedSignature.FastAggregateVerify(publicKeys, message)
+	}
+}
+
 func BenchmarkBlstAggregateVerify10(b *testing.B) {
 	benchmarkBlstAggregateVerify(10, b)
+}
+
+func BenchmarkHerumiAggregateVerify10(b *testing.B) {
+	benchmarkHerumiAggregateVerify(10, b)
 }
 
 func BenchmarkBlstAggregateVerify100(b *testing.B) {
 	benchmarkBlstAggregateVerify(100, b)
 }
 
+func BenchmarkHerumiAggregateVerify100(b *testing.B) {
+	benchmarkHerumiAggregateVerify(100, b)
+}
+
 func BenchmarkBlstAggregateVerify1000(b *testing.B) {
 	benchmarkBlstAggregateVerify(1000, b)
 }
 
+func BenchmarkHerumiAggregateVerify1000(b *testing.B) {
+	benchmarkHerumiAggregateVerify(1000, b)
+}
+
+//////////   Fast ////////////////////////
+
 func BenchmarkBlstFastAggregateVerify10(b *testing.B) {
 	benchmarkBlstFastAggregateVerify(10, b)
+}
+
+func BenchmarkHerumiFastAggregateVerify10(b *testing.B) {
+	benchmarkHerumiFastAggregateVerify(10, b)
 }
 
 func BenchmarkBlstFastAggregateVerify100(b *testing.B) {
 	benchmarkBlstFastAggregateVerify(100, b)
 }
 
+func BenchmarkHerumiFastAggregateVerify100(b *testing.B) {
+	benchmarkHerumiFastAggregateVerify(100, b)
+}
+
 func BenchmarkBlstFastAggregateVerify1000(b *testing.B) {
 	benchmarkBlstFastAggregateVerify(1000, b)
+}
+
+func BenchmarkHerumiFastAggregateVerify1000(b *testing.B) {
+	benchmarkHerumiFastAggregateVerify(1000, b)
 }
