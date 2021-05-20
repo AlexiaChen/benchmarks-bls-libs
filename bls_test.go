@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"testing"
 
+	herumi "github.com/herumi/bls-eth-go-binary/bls"
 	blst "github.com/supranational/blst/bindings/go"
 )
 
@@ -15,11 +16,25 @@ type blstAggregateSignature = blst.P2Aggregate
 type blstAggregatePublicKey = blst.P1Aggregate
 type blstSecretKey = blst.SecretKey
 
+type herumiPublicKey = herumi.PublicKey
+type _herumiPublickeyAggregator = herumi.PublicKey
+type herumiSecretKey = herumi.SecretKey
+type herumiSignature = herumi.Sign
+
 var dstMinPk = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
 
 func init() {
 	// Use all cores when testing and benchmarking
 	blst.SetMaxProcs(runtime.GOMAXPROCS(0))
+
+	if err := herumi.Init(herumi.BLS12_381); err != nil {
+		panic(err)
+	}
+	if err := herumi.SetETHmode(herumi.EthModeDraft07); err != nil {
+		panic(err)
+	}
+	herumi.VerifyPublicKeyOrder(true)
+	herumi.VerifySignatureOrder(true)
 }
 
 func randBLSTSecretKey() *blstSecretKey {
