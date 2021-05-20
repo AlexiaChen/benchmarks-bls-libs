@@ -1,2 +1,4 @@
+github.com/herumi/bls-eth-go-binary v0.0.0-20210504084019-f04b979e5fef h1:6fj3Xe89H1RELigndAInkWKsbYegsEcLdiSpSo4InUA=
+github.com/herumi/bls-eth-go-binary v0.0.0-20210504084019-f04b979e5fef/go.mod h1:luAnRm3OsMQeokhGzpYmc0ZKwawY7o87PUEP11Z7r7U=
 github.com/supranational/blst v0.3.4 h1:iZE9lBMoywK2uy2U/5hDOvobQk9FnOQ2wNlu9GmRCoA=
 github.com/supranational/blst v0.3.4/go.mod h1:jZJtfjgudtNl4en1tzwPIV3KjUnQUvG3/j+w+fVonLw=

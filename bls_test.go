@@ -44,8 +44,18 @@ func randBLSTSecretKey() *blstSecretKey {
 	return secretKey
 }
 
+func randHerumiSecretKey() *herumiSecretKey {
+	secretKey := new(herumi.SecretKey)
+	secretKey.SetByCSPRNG()
+	return secretKey
+}
+
 func blstPubkey(sk *blstSecretKey) *blstPublicKey {
 	return new(blstPublicKey).From(sk)
+}
+
+func herumiPubkey(sk *herumiSecretKey) *herumiPublicKey {
+	return sk.GetPublicKey()
 }
 
 func BenchmarkBlstSign(b *testing.B) {
@@ -54,6 +64,15 @@ func BenchmarkBlstSign(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		new(blstSignature).Sign(sk, msg, dstMinPk)
+	}
+}
+
+func BenchmarkHerumiSign(b *testing.B) {
+	sk := randHerumiSecretKey()
+	msg := []byte("hello foo")
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sk.Sign(string(msg))
 	}
 }
 
@@ -67,6 +86,20 @@ func BenchmarkBlstVerify(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		sig.Verify(true, pk, true, msg, dstMinPk)
+	}
+}
+
+func BenchmarkHerumiVerify(b *testing.B) {
+	sk := randHerumiSecretKey()
+	pk := herumiPubkey(sk)
+	msg := []byte("hello foo")
+	sig := sk.Sign(string(msg))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sig.Verify(
+			pk,
+			string(msg),
+		)
 	}
 }
 
