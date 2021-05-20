@@ -1,4 +1,5 @@
 # benchmarks-bls-libs
+
 a set of benchmarks for bls libs
 
 ## Run bencmarks
@@ -43,3 +44,7 @@ The following collation of a detailed table, because we only focus on the runnin
 From the above table, we can see that blst's library is faster than herumi library in both signature and verification signature, but only the performance of ordinary aggregated verification signature is 3 times faster than herumi library, if it is fast aggregated verification signature, blst library is obviously not 3 times faster than herumi library, the advantage is not great.
 
 Of course, all in all, the performance advantages of the blst library over the herumi library are comprehensive
+
+## Other BLS libraries
+
+the other librarys（Milagro, MIRACL, RELIC） mentioned by https://blog.quarkslab.com/technical-assessment-of-the-herumi-libraries.html is built by C, ASM, Rust etc. and there is no official bindings for Go language. And in terms of documentation, these libraries are very poorly documented compared to the blst and herumi libraries. So on the same premise, it is not convenient to do benchmark.
