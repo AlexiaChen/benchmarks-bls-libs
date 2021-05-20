@@ -31,7 +31,7 @@ BenchmarkHerumiFastAggregateVerify1000-8             393           2627733 ns/op
 The following collation of a detailed table, because we only focus on the running speed data, memory temporarily not concerned, because the content of the bounty at the time was mainly introduced blst than herumi 3 times faster：
 
 | BLS library        |   Herumi  |  blst  |
-| --------           | -----:   | :----: |
+| --------           | -----:   | ----: |
 | Single Sign        | 665471 ns/op      |  662231 ns/op    |
 | Single Verify       | 1793354 ns/op      |   1574097 ns/op    |
 | num 10 Aggregated Verify        | 9082633 ns/op      |   3833003 ns/op    |
