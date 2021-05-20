@@ -2,40 +2,96 @@ package main
 
 import (
 	"crypto/rand"
+	"runtime"
 	"testing"
 
 	blst "github.com/supranational/blst/bindings/go"
 )
 
-type PublicKey = blst.P1Affine
-type Signature = blst.P2Affine
-type AggregateSignature = blst.P2Aggregate
-type AggregatePublicKey = blst.P1Aggregate
+// Min-PK
+type blstPublicKey = blst.P1Affine
+type blstSignature = blst.P2Affine
+type blstAggregateSignature = blst.P2Aggregate
+type blstAggregatePublicKey = blst.P1Aggregate
+type blstSecretKey = blst.SecretKey
+
+var dstMinPk = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
+
+func init() {
+	// Use all cores when testing and benchmarking
+	blst.SetMaxProcs(runtime.GOMAXPROCS(0))
+}
+
+func randBLSTSecretKey() *blstSecretKey {
+	var t [32]byte
+	_, _ = rand.Read(t[:])
+	secretKey := blst.KeyGen(t[:])
+	return secretKey
+}
+
+func blstPubkey(sk *blstSecretKey) *blstPublicKey {
+	return new(blstPublicKey).From(sk)
+}
 
 func BenchmarkBlstSign(b *testing.B) {
-	var ikm [32]byte
-	_, _ = rand.Read(ikm[:])
-	sk := blst.KeyGen(ikm[:])
-
-	var dst = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
+	sk := randBLSTSecretKey()
 	msg := []byte("hello foo")
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		new(Signature).Sign(sk, msg, dst)
+		new(blstSignature).Sign(sk, msg, dstMinPk)
 	}
 }
 
 func BenchmarkBlstVerify(b *testing.B) {
-	var ikm [32]byte
-	_, _ = rand.Read(ikm[:])
-	sk := blst.KeyGen(ikm[:])
-	pk := new(PublicKey).From(sk)
 
-	var dst = []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_")
+	sk := randBLSTSecretKey()
+	pk := blstPubkey(sk)
+
 	msg := []byte("hello foo")
-	sig := new(Signature).Sign(sk, msg, dst)
+	sig := new(blstSignature).Sign(sk, msg, dstMinPk)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sig.Verify(true, pk, true, msg, dst)
+		sig.Verify(true, pk, true, msg, dstMinPk)
 	}
+}
+
+func benchmarkBlstAggregateVerify(n int, b *testing.B) {
+	messages := make([][]byte, n)
+	publicKeys := make([]*blstPublicKey, n)
+	signatures := make([]*blstSignature, n)
+
+	for i := 0; i < n; i++ {
+		message := make([]byte, 32)
+		rand.Read(message)
+		secretKey := randBLSTSecretKey()
+		publicKey := blstPubkey(secretKey)
+		signature := new(blstSignature).Sign(secretKey, message, dstMinPk)
+		signatures[i] = signature
+		publicKeys[i] = publicKey
+		messages[i] = message
+	}
+
+	aggregatedSignature := new(blst.P2Aggregate)
+	aggregatedSignature.Aggregate(signatures, false)
+
+	aggreSig := aggregatedSignature.ToAffine()
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		aggreSig.AggregateVerify(false, publicKeys, false, messages, dstMinPk)
+	}
+
+}
+
+func BenchmarkBlstAggregateVerify10(b *testing.B) {
+	benchmarkBlstAggregateVerify(10, b)
+}
+
+func BenchmarkBlstAggregateVerify100(b *testing.B) {
+	benchmarkBlstAggregateVerify(100, b)
+}
+
+func BenchmarkBlstAggregateVerify1000(b *testing.B) {
+	benchmarkBlstAggregateVerify(1000, b)
 }
