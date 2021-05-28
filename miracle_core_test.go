@@ -34,8 +34,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/miracl/core/go/core"
-	"github.com/miracl/core/go/core/BLS12383"
+	"github.com/miracl/core/go/core/BLS12381"
 )
 
 func printBinary(array []byte) {
@@ -45,65 +44,65 @@ func printBinary(array []byte) {
 	fmt.Printf("\n")
 }
 
-func bls_BLS12383(rng *core.RAND) {
+// func bls_BLS12383() {
 
-	const BGS = BLS12383.BGS
-	const BFS = BLS12383.BFS
-	const G1S = BFS + 1   /* Group 1 Size */
-	const G2S = 2*BFS + 1 /* Group 2 Size */
+// 	const BGS = BLS12383.BGS
+// 	const BFS = BLS12383.BFS
+// 	const G1S = BFS + 1   /* Group 1 Size */
+// 	const G2S = 2*BFS + 1 /* Group 2 Size */
 
-	var S [BGS]byte
-	var W [G2S]byte
-	var SIG [G1S]byte
-	var IKM [32]byte
+// 	var S [BGS]byte
+// 	var W [G2S]byte
+// 	var SIG [G1S]byte
+// 	var IKM [32]byte
 
-	for i := 0; i < len(IKM); i++ {
-		//IKM[i] = byte(i+1)
-		IKM[i] = byte(rng.GetByte())
-	}
+// 	for i := 0; i < len(IKM); i++ {
+// 		//IKM[i] = byte(i+1)
+// 		IKM[i] = byte(rng.GetByte())
+// 	}
 
-	fmt.Printf("\nTesting Boneh-Lynn-Shacham BLS signature on BLS12383 curve\n")
-	mess := "This is a test message"
+// 	fmt.Printf("\nTesting Boneh-Lynn-Shacham BLS signature on BLS12383 curve\n")
+// 	mess := "This is a test message"
 
-	res := BLS12383.Init()
-	if res != 0 {
-		fmt.Printf("Failed to Initialize\n")
-		return
-	}
+// 	res := BLS12383.Init()
+// 	if res != 0 {
+// 		fmt.Printf("Failed to Initialize\n")
+// 		return
+// 	}
 
-	res = BLS12383.KeyPairGenerate(IKM[:], S[:], W[:])
-	if res != 0 {
-		fmt.Printf("Failed to generate keys\n")
-		return
-	}
-	fmt.Printf("Private key : 0x")
-	printBinary(S[:])
-	fmt.Printf("Public  key : 0x")
-	printBinary(W[:])
+// 	res = BLS12383.KeyPairGenerate(IKM[:], S[:], W[:])
+// 	if res != 0 {
+// 		fmt.Printf("Failed to generate keys\n")
+// 		return
+// 	}
+// 	fmt.Printf("Private key : 0x")
+// 	printBinary(S[:])
+// 	fmt.Printf("Public  key : 0x")
+// 	printBinary(W[:])
 
-	BLS12383.Core_Sign(SIG[:], []byte(mess), S[:])
-	fmt.Printf("Signature : 0x")
-	printBinary(SIG[:])
+// 	BLS12383.Core_Sign(SIG[:], []byte(mess), S[:])
+// 	fmt.Printf("Signature : 0x")
+// 	printBinary(SIG[:])
 
-	res = BLS12383.Core_Verify(SIG[:], []byte(mess), W[:])
+// 	res = BLS12383.Core_Verify(SIG[:], []byte(mess), W[:])
 
-	if res == 0 {
-		fmt.Printf("Signature is OK\n")
-	} else {
-		fmt.Printf("Signature is *NOT* OK\n")
-	}
-}
+// 	if res == 0 {
+// 		fmt.Printf("Signature is OK\n")
+// 	} else {
+// 		fmt.Printf("Signature is *NOT* OK\n")
+// 	}
+// }
 
-func bls_BLS12381(rng *core.RAND) {
-
+func bls_BLS12381() {
+	const BGS = BLS12381.BGS
 }
 
 func BenchmarkMiracleCoreSign(b *testing.B) {
-	rng := core.NewRAND()
-	var raw [100]byte
-	for i := 0; i < 100; i++ {
-		raw[i] = byte(i + 1)
-	}
-	rng.Seed(100, raw[:])
-	bls_BLS12381(rng)
+	// rng := core.NewRAND()
+	// var raw [100]byte
+	// for i := 0; i < 100; i++ {
+	// 	raw[i] = byte(i + 1)
+	// }
+	// rng.Seed(100, raw[:])
+	// bls_BLS12381(rng)
 }
