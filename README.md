@@ -16,16 +16,16 @@ cargo bench --features bench
 
 The following collation of a detailed table, because we only focus on the running speed data, memory temporarily not concerned, because the content of the bounty at the time was mainly introduced blst than herumi 3 times faster：
 
-| BLS library        |   Herumi  |  blst  |    milagro(BLS381, G2 signature) |
-| --------           | -----:   | ----: |  ----: |            
-| Single Sign        | 665471 ns/op      |  662231 ns/op    |    1574800 ns/op |
-| Single Verify       | 1793354 ns/op      |   1574097 ns/op    |   5380100 ns/op |
-| num 10 Aggregated Verify        | 9082633 ns/op      |   3833003 ns/op    |     22576000 ns/op | 
-| num 100 Aggregated Verify        | 71359633 ns/op      |   23694837 ns/op   |     194460000 ns/op |
-| num 1000 Aggregated Verify        | 725578500 ns/op     |   225515180 ns/op     |  NULL |
-| num 10 Fast Aggregated Verify        | 1681933 ns/op     |  1514945 ns/op     |     NULL  |
-| num 100 Fast Aggregated Verify        | 2018462 ns/op       |   1775963 ns/op    |   NULL |
-| num 1000 Fast Aggregated Verify        | 2627733 ns/op     |   2254356 ns/op      |   NULL  |
+| BLS library        |   Herumi  |  blst  |    milagro(BLS381, G2 signature) |     relic    |
+| --------           | -----:   | ----: |  ----: |            -----:     |
+| Single Sign        | 665471 ns/op      |  662231 ns/op    |    1574800 ns/op |     NULL   |
+| Single Verify       | 1793354 ns/op      |   1574097 ns/op    |   5380100 ns/op |    NULL  |
+| num 10 Aggregated Verify        | 9082633 ns/op      |   3833003 ns/op    |     22576000 ns/op |    NULL | 
+| num 100 Aggregated Verify        | 71359633 ns/op      |   23694837 ns/op   |     194460000 ns/op |   NULL |
+| num 1000 Aggregated Verify        | 725578500 ns/op     |   225515180 ns/op     |  NULL |      NULL |
+| num 10 Fast Aggregated Verify        | 1681933 ns/op     |  1514945 ns/op     |     NULL  |   NULL |
+| num 100 Fast Aggregated Verify        | 2018462 ns/op       |   1775963 ns/op    |   NULL |   NULL |
+| num 1000 Fast Aggregated Verify        | 2627733 ns/op     |   2254356 ns/op      |   NULL  |    NULL
 
 From the above table, we can see that blst's library is faster than herumi library in both generate of signature and verification of signature, but only the performance of ordinary aggregated verification of signature is 3 times faster than herumi library, if it is fast aggregated verification of signature, blst library is obviously not 3 times faster than herumi library, the advantage is not great.
 
@@ -62,4 +62,14 @@ stack backtrace:
 note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
 error: bench failed
 ```
+
+This library performance and feature is not good
+
+### RELIC
+
+Just search bench and test folder of this project, There is no examples related to BLS12-381 for aggregated verification(It's BN Curve, another pairing-friendly curve), and I also found out that the maintainer of the project does not recommend this library for production environments and does not support aggregation(need to implement it by ourself according to paper), the issue is here https://github.com/relic-toolkit/relic/issues/65
+
+so RELIC library is not geed even compared to Milagro
+
+
 
