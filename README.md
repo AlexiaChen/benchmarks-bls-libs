@@ -69,7 +69,7 @@ This library performance and feature is not good
 
 Just search bench and test folder of this project, There is no examples related to BLS12-381 for aggregated verification(It's BN Curve, another pairing-friendly curve), and I also found out that the maintainer of the project does not recommend this library for production environments and does not support aggregation(need to implement it by ourself according to paper), the issue is here https://github.com/relic-toolkit/relic/issues/65
 
-so RELIC library is not geed even compared to Milagro
+so RELIC library is not good even compared to Milagro
 
 
 
