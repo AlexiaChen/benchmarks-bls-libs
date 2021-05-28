@@ -5,7 +5,12 @@ a set of benchmarks for bls libs
 ## Run bencmarks
 
 ```bash
-make bench
+# for herumi and blst
+make blsbench
+
+# for milagro
+cd incubator-milagro-crypto-rust
+cargo bench --features bench
 ```
 ## BenchMarks
 
