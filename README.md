@@ -71,5 +71,16 @@ Just search bench and test folder of this project, There is no examples related 
 
 so RELIC library is not good even compared to Milagro
 
+### MIRACLE
 
+- https://github.com/miracl/MIRACL
 
+i just search source and test,  it seems no BLS12-381 Curve and related signature aggregation. https://github.com/miracl/MIRACL/issues/104
+
+### MIRACLE Core
+
+- https://github.com/miracl/core
+
+> The original contribution to the Apache Milagro Cryptographic Library (AMCL) has now been extended and is being re-released as MIRACL Core. MIRACL Core features several improvements over AMCL.
+
+from description, it seems  to be compatible with Milagro and support BLS12-381 Curve.
